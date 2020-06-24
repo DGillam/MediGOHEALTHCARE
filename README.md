@@ -1,2 +1,2 @@
 # MediGO
-code for MediGO delivery robot software
+code for MediGO delivery robot healthcare desktop application
