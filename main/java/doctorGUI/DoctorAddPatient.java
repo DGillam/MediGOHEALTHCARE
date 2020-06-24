@@ -1,0 +1,686 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package doctorGUI;
+
+import com.google.firebase.database.utilities.Pair;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import medigohealthcare.DatabaseCommunication;
+import medigohealthcare.DistanceCalculator;
+import medigohealthcare.Security;
+import relations.Doctor;
+
+/**
+ *
+ * @author 20175707
+ */
+public class DoctorAddPatient extends javax.swing.JFrame {
+    
+    // patient data
+    String id;
+    String firstName;
+    String lastName;
+    String birthday;
+    ArrayList<String> medicineCurrent = new ArrayList<>();
+    String nextDelivery;
+    String address;
+    Doctor doctor;    
+    DefaultListModel listModelMed;
+    String prescription;
+    String signature;
+    String pharmacyClosest;
+    ImageIcon img;
+    /**
+     * Creates new form DoctorAddPatient
+     */
+    public DoctorAddPatient(Doctor doctor) {
+        img = new ImageIcon(getClass().getResource("/MediGO round symbol.png"));
+        listModelMed = new DefaultListModel();       
+        initComponents();
+        symbol.requestFocusInWindow();
+        removeMed.setEnabled(false);
+        this.doctor = doctor;
+        
+        removeMed.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                removeMed.setEnabled(false);
+            }
+        });
+        medicineList.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                removeMed.setEnabled(true);
+                modify.setEnabled(true);
+            }
+        });
+        modify.setEnabled(false);
+        
+        modify.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                modify.setEnabled(false);
+            }
+        });
+        
+        // Add listener for pharmacy
+        addressField.getDocument().addDocumentListener(new DocumentListener(){
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                try {
+                    pharmacyUpdate();
+                } catch (IOException | InterruptedException | ExecutionException ex) {
+                    Logger.getLogger(DoctorAddPatient.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                try {
+                    pharmacyUpdate();
+                } catch (IOException | InterruptedException | ExecutionException ex) {
+                    Logger.getLogger(DoctorAddPatient.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                try {
+                    pharmacyUpdate();
+                } catch (IOException | InterruptedException | ExecutionException ex) {
+                    Logger.getLogger(DoctorAddPatient.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+            public void pharmacyUpdate() throws IOException, InterruptedException, ExecutionException{
+                String addressPatient = addressField.getText();
+                if (addressPatient.equals("")){
+                    pharmacy.setText("");
+                } else {
+                    HashMap<String, String> pharmaciesAddresses = DatabaseCommunication.retrievePharmaciesAddresses();
+                    Pair<String, Integer> closest = DistanceCalculator.giveClosestPharmacy(addressPatient, pharmaciesAddresses);
+                    pharmacy.setText(closest.getFirst());
+                }
+            }
+        });
+    }
+
+    private DoctorAddPatient() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        name = new javax.swing.JTextField();
+        surname = new javax.swing.JTextField();
+        jPanel2 = new javax.swing.JPanel();
+        symbol = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        addPatient = new javax.swing.JButton();
+        cancel = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        medicineList = new javax.swing.JList<>();
+        removeMed = new javax.swing.JButton();
+        addMed = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jComboBox2 = new javax.swing.JComboBox<>();
+        jComboBox3 = new javax.swing.JComboBox<>();
+        modify = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        jComboBox4 = new javax.swing.JComboBox<>();
+        jComboBox5 = new javax.swing.JComboBox<>();
+        jComboBox6 = new javax.swing.JComboBox<>();
+        jComboBox7 = new javax.swing.JComboBox<>();
+        addAddress = new javax.swing.JButton();
+        addressField = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        pharmacy = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setIconImage(img.getImage());
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel1.setText("First Name");
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel2.setText("Last Name");
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel5.setText("Date of Birth");
+
+        name.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        surname.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jPanel2.setBackground(new java.awt.Color(42, 81, 197));
+
+        symbol.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logoBar.jpg"))); // NOI18N
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("Add patient data");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(symbol)
+                .addGap(68, 68, 68)
+                .addComponent(jLabel6)
+                .addContainerGap(100, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(symbol, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        addPatient.setBackground(new java.awt.Color(42, 81, 197));
+        addPatient.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        addPatient.setForeground(new java.awt.Color(255, 255, 255));
+        addPatient.setText("Add Patient");
+        addPatient.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addPatientActionPerformed(evt);
+            }
+        });
+
+        cancel.setBackground(new java.awt.Color(42, 81, 197));
+        cancel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cancel.setForeground(new java.awt.Color(255, 255, 255));
+        cancel.setText("Cancel");
+        cancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelActionPerformed(evt);
+            }
+        });
+
+        medicineList.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        medicineList.setModel(listModelMed);
+        jScrollPane1.setViewportView(medicineList);
+
+        removeMed.setBackground(new java.awt.Color(42, 81, 197));
+        removeMed.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        removeMed.setForeground(new java.awt.Color(255, 255, 255));
+        removeMed.setText("Remove Selected");
+        removeMed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeMedActionPerformed(evt);
+            }
+        });
+
+        addMed.setBackground(new java.awt.Color(42, 81, 197));
+        addMed.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        addMed.setForeground(new java.awt.Color(255, 255, 255));
+        addMed.setText("Add another medicine");
+        addMed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addMedActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel8.setText("Medicine List");
+
+        jComboBox1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October ", "November ", "December" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+
+        jComboBox2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" }));
+
+        jComboBox3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2000", "1999", "1998", "1997", "1996", "1995", "1994", "1993", "1992", "1991", "1990", "1989", "1988", "1987", "1986", "1985", "1984", "1983", "1982", "1981", "1980", "1979", "1978", "1977", "1976", "1975", "1974", "1973", "1972", "1971", "1970", "1969", "1968", "1967", "1966", "1965", "1964", "1963", "1962", "1961", "1960", "1959", "1958", "1957", "1956", "1955", "1954", "1953", "1952", "1951", "1950", "1949", "1948", "1947", "1946", "1945", "1944", "1943", "1942", "1941", "1940", "1939", "1938", "1937", "1936", "1935", "1934", "1933", "1932", "1931", "1930", "1929", "1928", "1927", "1926", "1925", "1924", "1923", "1922", "1921", "1920", "1919", "1918", "1917", "1916", "1915", "1914", "1913", "1912", "1911", "1910", "1909", "1908", "1907", "1906", "1905", "1904", "1903", "1902", "1901" }));
+        jComboBox3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox3ActionPerformed(evt);
+            }
+        });
+
+        modify.setBackground(new java.awt.Color(42, 81, 197));
+        modify.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        modify.setForeground(new java.awt.Color(255, 255, 255));
+        modify.setText("Modify Indication");
+        modify.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modifyActionPerformed(evt);
+            }
+        });
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel9.setText("Next Delivery");
+
+        jComboBox4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" }));
+
+        jComboBox5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jComboBox5.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October ", "November ", "December" }));
+        jComboBox5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox5ActionPerformed(evt);
+            }
+        });
+
+        jComboBox6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jComboBox6.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034", "2035", "2036", "2037", "2038", "2039", "2040" }));
+        jComboBox6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox6ActionPerformed(evt);
+            }
+        });
+
+        jComboBox7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jComboBox7.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "10:00-14:00", "17:00-21:00" }));
+        jComboBox7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox7ActionPerformed(evt);
+            }
+        });
+
+        addAddress.setBackground(new java.awt.Color(42, 81, 197));
+        addAddress.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        addAddress.setForeground(new java.awt.Color(255, 255, 255));
+        addAddress.setText("Add");
+        addAddress.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addAddressActionPerformed(evt);
+            }
+        });
+
+        addressField.setEditable(false);
+        addressField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel10.setText("Address");
+
+        pharmacy.setEditable(false);
+        pharmacy.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel11.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel11.setText("Pharmacy");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(addPatient))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(removeMed)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(modify)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(addMed))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(29, 29, 29)
+                                .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jComboBox7, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(43, 43, 43)
+                                .addComponent(addressField)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(addAddress))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(43, 43, 43)
+                                .addComponent(pharmacy))))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(29, 29, 29)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(surname, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
+                            .addComponent(name, javax.swing.GroupLayout.Alignment.TRAILING))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(surname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(removeMed)
+                    .addComponent(addMed)
+                    .addComponent(modify))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(addressField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addAddress))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(pharmacy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addPatient, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(25, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 514, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_cancelActionPerformed
+
+    private void removeMedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeMedActionPerformed
+        // TODO add your handling code here:
+        if (!(medicineList.getSelectedValue() == null)){
+            int index = medicineList.getSelectedIndex();
+            listModelMed.remove(index);
+        }
+        
+        int size = listModelMed.getSize();
+
+        if (size == 0 || medicineList.getSelectedValue() == null) { //Nobody's left, disable firing.
+            removeMed.setEnabled(false);
+
+        } else { //Remove selected.
+            int[] selectedIndices = medicineList.getSelectedIndices();
+            for (int i = selectedIndices.length-1; i >=0; i--) {
+              listModelMed.removeElementAt(selectedIndices[i]);
+            }
+        }
+    }//GEN-LAST:event_removeMedActionPerformed
+
+    private void addMedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addMedActionPerformed
+        try {
+            // TODO add your handling code here:
+            new MedicinesForm(listModelMed).setVisible(true);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(DoctorAddPatient.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExecutionException ex) {
+            Logger.getLogger(DoctorAddPatient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_addMedActionPerformed
+
+    private void addPatientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPatientActionPerformed
+        // TODO add your handling code here:
+        if (missingData()){
+            JOptionPane.showMessageDialog(null, "Not all data has been filled in.", "Error", JOptionPane.PLAIN_MESSAGE);
+        } else {
+            // retrive data
+            firstName = name.getText();
+            lastName = surname.getText();
+            String day = jComboBox2.getSelectedItem().toString();
+            String month = jComboBox1.getSelectedItem().toString();
+            String year = jComboBox3.getSelectedItem().toString();
+            birthday = day + "/" + month + "/" + year;
+            for (int i = 0; i < medicineList.getModel().getSize(); i++) {
+                String item = medicineList.getModel().getElementAt(i);
+                medicineCurrent.add(item);
+            }
+            String dayD = jComboBox4.getSelectedItem().toString();
+            String monthD = jComboBox5.getSelectedItem().toString();
+            String yearD = jComboBox6.getSelectedItem().toString();
+            String time = jComboBox7.getSelectedItem().toString();
+            nextDelivery = dayD + "/" + monthD + "/" + yearD + " " + time;
+            address = addressField.getText();
+            pharmacyClosest = pharmacy.getText();
+            
+            prescription = createPrescription();
+            signature = null;
+            try {
+                signature = Security.signPrescription(prescription);
+            } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException ex) {
+                Logger.getLogger(DoctorAddPatient.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            new TestPassed(this).setVisible(true);
+            
+        }
+    }//GEN-LAST:event_addPatientActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox3ActionPerformed
+
+    private void modifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modifyActionPerformed
+        // TODO add your handling code here:
+        int size = listModelMed.getSize();
+
+        if (size == 0 || medicineList.getSelectedValue() == null) { //Nobody's left, disable firing.
+            modify.setEnabled(false);
+        } else {
+            String selectedMed = medicineList.getSelectedValue();
+            int selectedIndex = medicineList.getSelectedIndex();
+            new Indication(listModelMed, selectedMed, selectedIndex).setVisible(true);
+        }
+    }//GEN-LAST:event_modifyActionPerformed
+
+    private void jComboBox5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox5ActionPerformed
+
+    private void jComboBox6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox6ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox6ActionPerformed
+
+    private void jComboBox7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox7ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox7ActionPerformed
+
+    private void addAddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAddressActionPerformed
+        // TODO add your handling code here:
+        addressField.setText("");
+        new AddAddress(this).setVisible(true);
+    }//GEN-LAST:event_addAddressActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(DoctorAddPatient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(DoctorAddPatient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(DoctorAddPatient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(DoctorAddPatient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new DoctorAddPatient().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addAddress;
+    private javax.swing.JButton addMed;
+    private javax.swing.JButton addPatient;
+    private javax.swing.JTextField addressField;
+    private javax.swing.JButton cancel;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBox2;
+    private javax.swing.JComboBox<String> jComboBox3;
+    private javax.swing.JComboBox<String> jComboBox4;
+    private javax.swing.JComboBox<String> jComboBox5;
+    private javax.swing.JComboBox<String> jComboBox6;
+    private javax.swing.JComboBox<String> jComboBox7;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JList<String> medicineList;
+    private javax.swing.JButton modify;
+    private javax.swing.JTextField name;
+    private javax.swing.JTextField pharmacy;
+    private javax.swing.JButton removeMed;
+    private javax.swing.JTextField surname;
+    private javax.swing.JLabel symbol;
+    // End of variables declaration//GEN-END:variables
+
+    public boolean missingData() {
+        String day = jComboBox2.getSelectedItem().toString();
+        String month = jComboBox1.getSelectedItem().toString();
+        String year = jComboBox3.getSelectedItem().toString();
+        String birthdayChange = day + "/" + month + "/" + year;
+        String dayD = jComboBox4.getSelectedItem().toString();
+        String monthD = jComboBox5.getSelectedItem().toString();
+        String yearD = jComboBox6.getSelectedItem().toString();
+        String nextDeliveryChange = dayD + "/" + monthD + "/" + yearD;
+        String address = addressField.getText();
+        
+        if (name.getText().equals("")||
+                surname.getText().equals("")||
+                medicineList.getModel().getSize()==0||
+                birthdayChange.equals("1/January/2000")||
+                nextDeliveryChange.equals("1/January/2020")||
+                address.equals("")){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public void setAddress(String addressPat){
+        this.addressField.setText(addressPat);
+    }
+
+    private String createPrescription() {
+        String prescription = null;
+        for (String med : medicineCurrent){
+            if (prescription == null) {
+                prescription = med;
+            } else {
+                prescription = prescription + med;
+            }
+        }
+        return prescription;
+    }
+}
